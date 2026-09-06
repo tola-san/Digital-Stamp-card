@@ -45,7 +45,10 @@ func healthHandler(checker HealthChecker) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": gin.H{"status": "ok"}})
+		c.JSON(http.StatusOK, gin.H{"data": gin.H{
+			"status": "api is running"},
+		},
+		)
 	}
 }
 

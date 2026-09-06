@@ -445,11 +445,10 @@ DATABASE_URL=postgres://postgres:password@localhost:5432/digital_stamp
 FRONTEND_URL=http://localhost:3000
 ```
 
-Create the database and apply the initial migration:
+Create the database. The API applies embedded migrations automatically when it starts:
 
 ```bash
 createdb digital_stamp
-psql "$DATABASE_URL" -f migrations/000001_initial.up.sql
 ```
 
 Run backend:
