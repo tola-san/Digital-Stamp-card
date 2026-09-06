@@ -1,2 +1,11 @@
 # Preserved metadata from the former nested digital-stamp repository.
 digital-stamp/.git-history-backup/
+
+# Local Go caches used by the API test workflow.
+gin-api/.gocache/
+gin-api/.gomodcache/
+
+# Local environment files; examples remain versioned.
+**/.env
+**/.env.local
+!**/.env.example

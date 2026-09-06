@@ -65,39 +65,25 @@ https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-t
 # Project Structure
 
 ```text
-digital-stamp/
-│
-├── golang-gin-api/
-│   ├── cmd/
-│   │   └── api/
-│   │       └── main.go
-│   │
+digital-stamp-card/
+├── gin-api/
+│   ├── cmd/api/
 │   ├── internal/
-│   │   ├── auth/
-│   │   ├── customer/
-│   │   ├── staff/
-│   │   ├── stamp/
-│   │   └── reward/
-│   │
-│   ├── pkg/
+│   │   ├── config/
+│   │   ├── database/
+│   │   ├── delivery/http/
+│   │   └── domain/
 │   ├── migrations/
-│   ├── .env
-│   ├── go.mod
-│   └── go.sum
+│   ├── .env.example
+│   └── go.mod
 │
-└── web/
-    ├── src/
-    │   ├── app/
-    │   │   ├── customer/
-    │   │   ├── staff/
-    │   │   └── login/
-    │   │
-    │   ├── components/
-    │   ├── lib/
-    │   └── types/
-    │
+└── digital-stamp/
+    ├── app/
+    ├── components/
+    ├── lib/
+    ├── types/
     ├── public/
-    ├── .env.local
+    ├── .env.example
     └── package.json
 ```
 
@@ -430,7 +416,7 @@ Free Coffee
 ```bash
 git clone <your-repository-url>
 
-cd digital-stamp
+cd digital-stamp-card
 ```
 
 ---
@@ -440,7 +426,7 @@ cd digital-stamp
 Go to backend:
 
 ```bash
-cd golang-gin-api
+cd gin-api
 ```
 
 Install dependencies:
@@ -449,7 +435,7 @@ Install dependencies:
 go mod tidy
 ```
 
-Create `.env`:
+Copy `.env.example` to `.env`, then configure it:
 
 ```env
 PORT=8080
@@ -457,6 +443,13 @@ PORT=8080
 DATABASE_URL=postgres://postgres:password@localhost:5432/digital_stamp
 
 FRONTEND_URL=http://localhost:3000
+```
+
+Create the database and apply the initial migration:
+
+```bash
+createdb digital_stamp
+psql "$DATABASE_URL" -f migrations/000001_initial.up.sql
 ```
 
 Run backend:
@@ -484,7 +477,7 @@ http://localhost:8080/api/health
 Go to frontend:
 
 ```bash
-cd web
+cd digital-stamp
 ```
 
 Install dependencies:
@@ -493,13 +486,7 @@ Install dependencies:
 npm install
 ```
 
-Create:
-
-```text
-.env.local
-```
-
-Add:
+Copy `.env.example` to `.env.local` and set:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080/api

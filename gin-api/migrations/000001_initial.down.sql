@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS stamp_transactions;
+DROP TABLE IF EXISTS stamp_qrs;
+DROP TABLE IF EXISTS stamp_cards;
+DROP TABLE IF EXISTS rewards;
+DROP TABLE IF EXISTS staff;
+DROP TABLE IF EXISTS customers;

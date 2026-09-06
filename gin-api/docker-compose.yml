@@ -1,0 +1,32 @@
+
+
+
+# service config
+service: 
+
+  api:
+    build: .
+    container_name: digital-stamp-api
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: host=db user=postgres password=postgres dbname=digital_stamp port=5432 sslmode=disable
+    depends_on:
+      - db
+  
+  # database config
+  db:
+    image: postgres:17-alpine
+    container_name: digital-stamp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: digital_stamp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data    
+
+    volumes:
+  postgres_data:
