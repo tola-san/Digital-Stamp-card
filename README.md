@@ -36,81 +36,12 @@ The project helps small businesses such as coffee shops, salons, barbers, bakeri
 ---
 
 ## Core Flow
-
-### New Customer
-
-```text
-Scan Shop QR
-    ↓
-Open Customer Portal
-    ↓
-Enter Name + Phone
-    ↓
-Create Customer
-    ↓
-Create Stamp Card
-    ↓
-0 / 10 Stamps
-```
-
-### Returning Customer
-
-```text
-Scan Shop QR
-    ↓
-Validate Customer Session
-    ↓
-Load Existing Stamp Card
-    ↓
-Continue Previous Progress
-```
-
-Example:
-
-```text
-Previous Visit
-7 / 10 stamps
-
-Next Visit
-7 / 10 stamps
-    ↓
-Receive Stamp
-    ↓
-8 / 10 stamps
-```
-
-### Give Stamp
-
-```text
-Customer Purchases
-    ↓
-Staff Generates Temporary QR
-    ↓
-Customer Scans QR
-    ↓
-Backend Validates QR
-    ↓
-+1 Stamp
-    ↓
-QR Becomes Used
-```
-
-### Reward
-
-```text
-10 / 10 Stamps
-    ↓
-Reward Unlocked
-    ↓
-Staff Redeems Reward
-    ↓
-Stamp Card Resets
-```
-
----
-
+![Digital Stamp Architecture](https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/gp84qjwwtc9e75s1jtdu)
 # Tech Stack
 
+
+
+https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/wjvodaiagbrifrkt82gw
 ## Backend
 
 * Go
@@ -173,6 +104,8 @@ digital-stamp/
 ---
 
 # Backend Architecture
+
+![Digital Stamp Architecture](https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/wjvodaiagbrifrkt82gw)
 
 The Go API follows a simple layered architecture.
 
