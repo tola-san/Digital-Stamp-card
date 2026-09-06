@@ -1,6 +1,6 @@
 # docker file description about configuration deploy
 
-FROM golang:1.26-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 WORKDIR /app
 
@@ -10,14 +10,14 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o server ./cmd/api
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o server ./cmd/api
 
-FROM alpine:latest
+FROM alpine:3.22
 
 WORKDIR /app
 
 COPY --from=builder /app/server .
 
-EXPOSE 8080
+EXPOSE 10000
 
 CMD ["./server"]
