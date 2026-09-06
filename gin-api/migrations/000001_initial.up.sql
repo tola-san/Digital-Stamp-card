@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL CHECK (char_length(trim(name)) BETWEEN 2 AND 100),
     phone TEXT NOT NULL UNIQUE,
@@ -8,7 +8,7 @@ CREATE TABLE customers (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE staff (
+CREATE TABLE IF NOT EXISTS staff (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL CHECK (char_length(trim(name)) BETWEEN 2 AND 100),
     email TEXT NOT NULL UNIQUE,
@@ -17,7 +17,7 @@ CREATE TABLE staff (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE rewards (
+CREATE TABLE IF NOT EXISTS rewards (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -27,7 +27,7 @@ CREATE TABLE rewards (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE stamp_cards (
+CREATE TABLE IF NOT EXISTS stamp_cards (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id UUID NOT NULL UNIQUE REFERENCES customers(id) ON DELETE CASCADE,
     stamp_count INTEGER NOT NULL DEFAULT 0 CHECK (stamp_count >= 0),
@@ -36,7 +36,7 @@ CREATE TABLE stamp_cards (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE stamp_qrs (
+CREATE TABLE IF NOT EXISTS stamp_qrs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     token_hash TEXT NOT NULL UNIQUE,
     staff_id UUID NOT NULL REFERENCES staff(id),
@@ -48,7 +48,7 @@ CREATE TABLE stamp_qrs (
     CHECK ((status = 'USED' AND used_at IS NOT NULL AND used_by_customer_id IS NOT NULL) OR status <> 'USED')
 );
 
-CREATE TABLE stamp_transactions (
+CREATE TABLE IF NOT EXISTS stamp_transactions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id UUID NOT NULL REFERENCES customers(id),
     staff_id UUID REFERENCES staff(id),
@@ -59,6 +59,6 @@ CREATE TABLE stamp_transactions (
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX stamp_transactions_customer_created_idx ON stamp_transactions (customer_id, created_at DESC);
-CREATE INDEX stamp_qrs_staff_created_idx ON stamp_qrs (staff_id, created_at DESC);
-CREATE INDEX stamp_qrs_active_expiry_idx ON stamp_qrs (expires_at) WHERE status = 'ACTIVE';
+CREATE INDEX IF NOT EXISTS stamp_transactions_customer_created_idx ON stamp_transactions (customer_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS stamp_qrs_staff_created_idx ON stamp_qrs (staff_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS stamp_qrs_active_expiry_idx ON stamp_qrs (expires_at) WHERE status = 'ACTIVE';

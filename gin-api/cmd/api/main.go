@@ -29,6 +29,17 @@ func main() {
 	if err := database.ApplyMigrations(startupCtx, db); err != nil {
 		log.Fatalf("apply database migrations: %v", err)
 	}
+	created, err := database.SeedStaff(startupCtx, db, database.StaffSeed{
+		Name:     cfg.SeedStaffName,
+		Email:    cfg.SeedStaffEmail,
+		Password: cfg.SeedStaffPassword,
+	})
+	if err != nil {
+		log.Fatalf("seed staff account: %v", err)
+	}
+	if created {
+		log.Print("initial staff account created; remove SEED_STAFF_* environment variables")
+	}
 
 	router := httpdelivery.NewRouter(httpdelivery.RouterDependencies{HealthChecker: db, FrontendURL: cfg.FrontendURL})
 	server := &http.Server{Addr: ":" + cfg.Port, Handler: router, ReadHeaderTimeout: 5 * time.Second}
