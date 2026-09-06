@@ -26,6 +26,9 @@ func main() {
 		log.Fatalf("connect to database: %v", err)
 	}
 	defer db.Close()
+	if err := database.ApplyMigrations(startupCtx, db); err != nil {
+		log.Fatalf("apply database migrations: %v", err)
+	}
 
 	router := httpdelivery.NewRouter(httpdelivery.RouterDependencies{HealthChecker: db, FrontendURL: cfg.FrontendURL})
 	server := &http.Server{Addr: ":" + cfg.Port, Handler: router, ReadHeaderTimeout: 5 * time.Second}
