@@ -11,6 +11,7 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: digital-stamp-db
+          databaseName: digital_stamp
           property: connectionString
       - key: FRONTEND_URL
         sync: false
