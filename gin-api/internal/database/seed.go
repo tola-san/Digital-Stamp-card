@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,7 +16,7 @@ type StaffSeed struct {
 
 // SeedStaff creates the first staff account once. Existing emails are left
 // unchanged so a deployment cannot unexpectedly reset a password.
-func SeedStaff(ctx context.Context, pool *pgxpool.Pool, seed StaffSeed) (bool, error) {
+func SeedStaff(ctx context.Context, pool *DB, seed StaffSeed) (bool, error) {
 	if seed.Name == "" && seed.Email == "" && seed.Password == "" {
 		return false, nil
 	}
@@ -27,13 +26,16 @@ func SeedStaff(ctx context.Context, pool *pgxpool.Pool, seed StaffSeed) (bool, e
 		return false, fmt.Errorf("hash staff password: %w", err)
 	}
 
-	command, err := pool.Exec(ctx, `
-		INSERT INTO staff (name, email, password_hash)
-		VALUES ($1, $2, $3)
-		ON CONFLICT (email) DO NOTHING
+	command, err := pool.ExecContext(ctx, `
+		INSERT IGNORE INTO staff (name, email, password_hash)
+		VALUES (?, ?, ?)
 	`, strings.TrimSpace(seed.Name), strings.ToLower(strings.TrimSpace(seed.Email)), string(passwordHash))
 	if err != nil {
 		return false, fmt.Errorf("seed staff account: %w", err)
 	}
-	return command.RowsAffected() == 1, nil
+	rowsAffected, err := command.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("read seeded staff result: %w", err)
+	}
+	return rowsAffected == 1, nil
 }

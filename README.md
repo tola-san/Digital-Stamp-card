@@ -46,8 +46,8 @@ https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-t
 
 * Go
 * Gin
-* PostgreSQL
-* pgx
+* MySQL (Aiven in production)
+* database/sql with go-sql-driver/mysql
 * REST API
 * Cookie-based sessions
 * QR code generation
@@ -106,7 +106,7 @@ Service
     ↓
 Repository
     ↓
-PostgreSQL
+MySQL
 ```
 
 ### Handler
@@ -440,15 +440,15 @@ Copy `.env.example` to `.env`, then configure it:
 ```env
 PORT=8080
 
-DATABASE_URL=postgres://postgres:password@localhost:5432/digital_stamp
+DATABASE_URL=mysql://app:app@localhost:3306/digital_stamp?ssl-mode=DISABLED
 
 FRONTEND_URL=http://localhost:3000
 ```
 
-Create the database. The API applies embedded migrations automatically when it starts:
+Start MySQL locally. The API applies embedded migrations automatically when it starts:
 
 ```bash
-createdb digital_stamp
+docker compose up -d db
 ```
 
 Run backend:
@@ -514,8 +514,8 @@ http://localhost:3000
 Go Gin API
 http://localhost:8080
 
-PostgreSQL
-localhost:5432
+MySQL
+localhost:3306
 ```
 
 ---

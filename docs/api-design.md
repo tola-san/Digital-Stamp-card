@@ -44,7 +44,7 @@ Customer and staff sessions will use secure, HTTP-only cookies. Browser requests
 
 ### `GET /health`
 
-Checks that the API and PostgreSQL connection are available.
+Checks that the API and MySQL connection are available.
 
 **Response — `200 OK`**
 

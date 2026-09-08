@@ -1,64 +1,93 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE TABLE IF NOT EXISTS customers (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL CHECK (char_length(trim(name)) BETWEEN 2 AND 100),
-    phone TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    name VARCHAR(100) NOT NULL CHECK (CHAR_LENGTH(TRIM(name)) BETWEEN 2 AND 100),
+    phone VARCHAR(32) NOT NULL UNIQUE,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
 );
 
 CREATE TABLE IF NOT EXISTS staff (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL CHECK (char_length(trim(name)) BETWEEN 2 AND 100),
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    name VARCHAR(100) NOT NULL CHECK (CHAR_LENGTH(TRIM(name)) BETWEEN 2 AND 100),
+    email VARCHAR(254) COLLATE utf8mb4_0900_ai_ci NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
 );
 
 CREATE TABLE IF NOT EXISTS rewards (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    required_stamps INTEGER NOT NULL CHECK (required_stamps > 0),
-    active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    required_stamps INT NOT NULL CHECK (required_stamps > 0),
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
 );
 
 CREATE TABLE IF NOT EXISTS stamp_cards (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    customer_id UUID NOT NULL UNIQUE REFERENCES customers(id) ON DELETE CASCADE,
-    stamp_count INTEGER NOT NULL DEFAULT 0 CHECK (stamp_count >= 0),
-    required_stamps INTEGER NOT NULL DEFAULT 10 CHECK (required_stamps > 0),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    customer_id CHAR(36) CHARACTER SET ascii NOT NULL UNIQUE,
+    stamp_count INT NOT NULL DEFAULT 0 CHECK (stamp_count >= 0),
+    required_stamps INT NOT NULL DEFAULT 10 CHECK (required_stamps > 0),
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS stamp_qrs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    token_hash TEXT NOT NULL UNIQUE,
-    staff_id UUID NOT NULL REFERENCES staff(id),
-    status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'USED', 'EXPIRED', 'CANCELLED')),
-    expires_at TIMESTAMPTZ NOT NULL,
-    used_at TIMESTAMPTZ,
-    used_by_customer_id UUID REFERENCES customers(id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    CHECK ((status = 'USED' AND used_at IS NOT NULL AND used_by_customer_id IS NOT NULL) OR status <> 'USED')
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    token_hash VARCHAR(255) NOT NULL UNIQUE,
+    staff_id CHAR(36) CHARACTER SET ascii NOT NULL,
+    status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'USED', 'EXPIRED', 'CANCELLED')),
+    expires_at DATETIME(6) NOT NULL,
+    used_at DATETIME(6),
+    used_by_customer_id CHAR(36) CHARACTER SET ascii,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    FOREIGN KEY (staff_id) REFERENCES staff(id),
+    FOREIGN KEY (used_by_customer_id) REFERENCES customers(id),
+    INDEX stamp_qrs_staff_created_idx (staff_id, created_at DESC),
+    INDEX stamp_qrs_status_expiry_idx (status, expires_at),
+    CONSTRAINT stamp_qrs_usage_matches_status_check CHECK (
+        (status = 'USED' AND used_at IS NOT NULL AND used_by_customer_id IS NOT NULL)
+        OR
+        (status <> 'USED' AND used_at IS NULL AND used_by_customer_id IS NULL)
+    )
 );
 
 CREATE TABLE IF NOT EXISTS stamp_transactions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    customer_id UUID NOT NULL REFERENCES customers(id),
-    staff_id UUID REFERENCES staff(id),
-    reward_id UUID REFERENCES rewards(id),
-    stamp_qr_id UUID UNIQUE REFERENCES stamp_qrs(id),
-    type TEXT NOT NULL CHECK (type IN ('STAMP_ADDED', 'STAMP_REVERSED', 'REWARD_REDEEMED')),
-    stamp_delta INTEGER NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id CHAR(36) CHARACTER SET ascii PRIMARY KEY DEFAULT (UUID()),
+    customer_id CHAR(36) CHARACTER SET ascii NOT NULL,
+    staff_id CHAR(36) CHARACTER SET ascii,
+    reward_id CHAR(36) CHARACTER SET ascii,
+    stamp_qr_id CHAR(36) CHARACTER SET ascii UNIQUE,
+    type VARCHAR(32) NOT NULL CHECK (type IN ('STAMP_ADDED', 'STAMP_REVERSED', 'REWARD_REDEEMED')),
+    stamp_delta INT NOT NULL,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    FOREIGN KEY (staff_id) REFERENCES staff(id),
+    FOREIGN KEY (reward_id) REFERENCES rewards(id),
+    FOREIGN KEY (stamp_qr_id) REFERENCES stamp_qrs(id),
+    INDEX stamp_transactions_customer_created_idx (customer_id, created_at DESC),
+    CONSTRAINT stamp_transactions_type_relationships_check CHECK (
+        (
+            type = 'STAMP_ADDED'
+            AND stamp_delta > 0
+            AND reward_id IS NULL
+        )
+        OR
+        (
+            type = 'STAMP_REVERSED'
+            AND stamp_delta < 0
+            AND reward_id IS NULL
+            AND stamp_qr_id IS NULL
+        )
+        OR
+        (
+            type = 'REWARD_REDEEMED'
+            AND stamp_delta < 0
+            AND reward_id IS NOT NULL
+            AND stamp_qr_id IS NULL
+        )
+    )
 );
-
-CREATE INDEX IF NOT EXISTS stamp_transactions_customer_created_idx ON stamp_transactions (customer_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS stamp_qrs_staff_created_idx ON stamp_qrs (staff_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS stamp_qrs_active_expiry_idx ON stamp_qrs (expires_at) WHERE status = 'ACTIVE';

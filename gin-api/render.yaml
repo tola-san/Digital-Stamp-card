@@ -9,17 +9,6 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: digital-stamp-db
-          databaseName: digital_stamp
-          property: connectionString
+        sync: false
       - key: FRONTEND_URL
         sync: false
-
-databases:
-  - name: digital-stamp-db
-    region: singapore
-    plan: free
-    databaseName: digital_stamp
-    user: digital_stamp_user
-    postgresMajorVersion: "17"
