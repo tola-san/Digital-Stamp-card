@@ -10,7 +10,7 @@ func TestLoadRequiresDatabaseURL(t *testing.T) {
 }
 
 func TestLoadUsesDefaults(t *testing.T) {
-	t.Setenv("DATABASE_URL", "postgres://example")
+	t.Setenv("DATABASE_URL", "mysql://example")
 	t.Setenv("PORT", "")
 	t.Setenv("FRONTEND_URL", "")
 	cfg, err := Load()

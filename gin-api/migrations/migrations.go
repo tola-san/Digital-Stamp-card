@@ -13,6 +13,8 @@ var Files embed.FS
 
 var Up = []string{
 	"000001_initial.up.sql",
+	"000002_seed_default_reward.up.sql",
+	"000003_sessions_and_relationships.up.sql",
 }
 
 func ReadUp(name string) ([]byte, error) {
