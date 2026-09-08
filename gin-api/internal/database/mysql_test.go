@@ -6,13 +6,13 @@ import (
 )
 
 func TestMySQLDSNConvertsAivenURL(t *testing.T) {
-	dsn, err := mysqlDSN("mysql://avnadmin:p%40ss@example.aivencloud.com:11881/defaultdb?ssl-mode=REQUIRED")
+	dsn, err := mysqlDSN("mysql://avnadmin:p%40ss@example.aivencloud.com:11881/defaultdb?ssl-mode=REQUIRED", "")
 	if err != nil {
 		t.Fatalf("mysqlDSN returned an error: %v", err)
 	}
 	for _, expected := range []string{
 		"avnadmin:p@ss@tcp(example.aivencloud.com:11881)/defaultdb",
-		"tls=true",
+		"tls=skip-verify",
 		"parseTime=true",
 	} {
 		if !strings.Contains(dsn, expected) {
@@ -22,18 +22,28 @@ func TestMySQLDSNConvertsAivenURL(t *testing.T) {
 }
 
 func TestMySQLDSNRejectsConnectionWithoutSSLMode(t *testing.T) {
-	_, err := mysqlDSN("mysql://user:password@example.com:3306/database")
+	_, err := mysqlDSN("mysql://user:password@example.com:3306/database", "")
 	if err == nil {
 		t.Fatal("expected connection without ssl-mode to be rejected")
 	}
 }
 
 func TestMySQLDSNAcceptsDisabledTLSForLocalDevelopment(t *testing.T) {
-	dsn, err := mysqlDSN("mysql://app:password@db:3306/digital_stamp?ssl-mode=DISABLED")
+	dsn, err := mysqlDSN("mysql://app:password@db:3306/digital_stamp?ssl-mode=DISABLED", "")
 	if err != nil {
 		t.Fatalf("mysqlDSN returned an error: %v", err)
 	}
 	if strings.Contains(dsn, "tls=true") {
 		t.Fatalf("expected local DSN not to enable TLS, got %q", dsn)
+	}
+}
+
+func TestMySQLDSNReportsMissingCAFile(t *testing.T) {
+	_, err := mysqlDSN(
+		"mysql://user:password@example.aivencloud.com:3306/database?ssl-mode=VERIFY_IDENTITY",
+		"missing-ca.pem",
+	)
+	if err == nil || !strings.Contains(err.Error(), "read database CA certificate") {
+		t.Fatalf("expected missing CA certificate error, got %v", err)
 	}
 }

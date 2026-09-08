@@ -2,11 +2,16 @@ package database
 
 import (
 	"context"
+	"crypto/sha256"
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"fmt"
 	"net"
 	"net/url"
+	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -17,12 +22,17 @@ type DB struct {
 	*sql.DB
 }
 
+var (
+	tlsConfigMu         sync.Mutex
+	registeredTLSConfig = make(map[string]struct{})
+)
+
 func (db *DB) Ping(ctx context.Context) error {
 	return db.PingContext(ctx)
 }
 
-func Open(ctx context.Context, databaseURL string) (*DB, error) {
-	dsn, err := mysqlDSN(databaseURL)
+func Open(ctx context.Context, databaseURL, caCertFile string) (*DB, error) {
+	dsn, err := mysqlDSN(databaseURL, caCertFile)
 	if err != nil {
 		return nil, fmt.Errorf("parse database URL: %w", err)
 	}
@@ -43,9 +53,10 @@ func Open(ctx context.Context, databaseURL string) (*DB, error) {
 }
 
 // mysqlDSN converts the mysql:// URL supplied by Aiven into the native DSN
-// expected by go-sql-driver/mysql. Aiven's ssl-mode=REQUIRED is mapped to a
-// verified TLS connection; ssl-mode=DISABLED is intended for local development.
-func mysqlDSN(databaseURL string) (string, error) {
+// expected by go-sql-driver/mysql. ssl-mode=REQUIRED encrypts without verifying
+// the issuer, matching MySQL's mode semantics. Supplying a CA file enables full
+// certificate and hostname verification.
+func mysqlDSN(databaseURL, caCertFile string) (string, error) {
 	u, err := url.Parse(databaseURL)
 	if err != nil {
 		return "", err
@@ -75,12 +86,20 @@ func mysqlDSN(databaseURL string) (string, error) {
 	sslMode := strings.ToUpper(u.Query().Get("ssl-mode"))
 	var tlsConfig string
 	switch sslMode {
-	case "REQUIRED", "VERIFY_CA", "VERIFY_IDENTITY":
+	case "REQUIRED":
+		tlsConfig = "skip-verify"
+	case "VERIFY_CA", "VERIFY_IDENTITY":
 		tlsConfig = "true"
 	case "DISABLED":
 		tlsConfig = "false"
 	default:
-		return "", fmt.Errorf("ssl-mode must be REQUIRED or DISABLED")
+		return "", fmt.Errorf("unsupported ssl-mode %q", sslMode)
+	}
+	if caCertFile != "" && sslMode != "DISABLED" {
+		tlsConfig, err = registerTLSConfig(caCertFile, u.Hostname())
+		if err != nil {
+			return "", err
+		}
 	}
 
 	cfg := mysql.NewConfig()
@@ -96,4 +115,31 @@ func mysqlDSN(databaseURL string) (string, error) {
 	cfg.ReadTimeout = 10 * time.Second
 	cfg.WriteTimeout = 10 * time.Second
 	return cfg.FormatDSN(), nil
+}
+
+func registerTLSConfig(caCertFile, serverName string) (string, error) {
+	pem, err := os.ReadFile(caCertFile)
+	if err != nil {
+		return "", fmt.Errorf("read database CA certificate: %w", err)
+	}
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(pem) {
+		return "", fmt.Errorf("parse database CA certificate: no certificates found")
+	}
+
+	digest := sha256.Sum256(append(pem, serverName...))
+	name := fmt.Sprintf("aiven-%x", digest[:8])
+	tlsConfigMu.Lock()
+	defer tlsConfigMu.Unlock()
+	if _, exists := registeredTLSConfig[name]; !exists {
+		if err := mysql.RegisterTLSConfig(name, &tls.Config{
+			MinVersion: tls.VersionTLS12,
+			RootCAs:    roots,
+			ServerName: serverName,
+		}); err != nil {
+			return "", fmt.Errorf("register database TLS configuration: %w", err)
+		}
+		registeredTLSConfig[name] = struct{}{}
+	}
+	return name, nil
 }

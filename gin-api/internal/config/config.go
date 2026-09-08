@@ -6,23 +6,25 @@ import (
 )
 
 type Config struct {
-	Port              string
-	DatabaseURL       string
-	FrontendURL       string
-	SeedStaffName     string
-	SeedStaffEmail    string
-	SeedStaffPassword string
+	Port               string
+	DatabaseURL        string
+	DatabaseCACertFile string
+	FrontendURL        string
+	SeedStaffName      string
+	SeedStaffEmail     string
+	SeedStaffPassword  string
 }
 
 func Load() (Config, error) {
 
 	cfg := Config{
-		Port:              valueOrDefault("PORT", "8080"),
-		DatabaseURL:       os.Getenv("DATABASE_URL"),
-		FrontendURL:       valueOrDefault("FRONTEND_URL", "http://localhost:3000"),
-		SeedStaffName:     os.Getenv("SEED_STAFF_NAME"),
-		SeedStaffEmail:    os.Getenv("SEED_STAFF_EMAIL"),
-		SeedStaffPassword: os.Getenv("SEED_STAFF_PASSWORD"),
+		Port:               valueOrDefault("PORT", "8080"),
+		DatabaseURL:        os.Getenv("DATABASE_URL"),
+		DatabaseCACertFile: os.Getenv("DATABASE_CA_CERT_FILE"),
+		FrontendURL:        valueOrDefault("FRONTEND_URL", "http://localhost:3000"),
+		SeedStaffName:      os.Getenv("SEED_STAFF_NAME"),
+		SeedStaffEmail:     os.Getenv("SEED_STAFF_EMAIL"),
+		SeedStaffPassword:  os.Getenv("SEED_STAFF_PASSWORD"),
 	}
 	if cfg.DatabaseURL == "" {
 		return Config{}, errors.New("DATABASE_URL is required")

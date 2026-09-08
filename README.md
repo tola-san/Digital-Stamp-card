@@ -442,6 +442,9 @@ PORT=8080
 
 DATABASE_URL=mysql://app:app@localhost:3306/digital_stamp?ssl-mode=DISABLED
 
+# Optional in production for verified Aiven TLS:
+# DATABASE_CA_CERT_FILE=/etc/secrets/aiven-ca.pem
+
 FRONTEND_URL=http://localhost:3000
 ```
 

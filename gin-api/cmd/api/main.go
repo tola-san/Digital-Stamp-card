@@ -21,7 +21,7 @@ func main() {
 
 	startupCtx, cancelStartup := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancelStartup()
-	db, err := database.Open(startupCtx, cfg.DatabaseURL)
+	db, err := database.Open(startupCtx, cfg.DatabaseURL, cfg.DatabaseCACertFile)
 	if err != nil {
 		log.Fatalf("connect to database: %v", err)
 	}
