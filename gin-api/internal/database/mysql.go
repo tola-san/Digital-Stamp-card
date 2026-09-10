@@ -95,6 +95,7 @@ func mysqlDSN(databaseURL, caCertFile string) (string, error) {
 	default:
 		return "", fmt.Errorf("unsupported ssl-mode %q", sslMode)
 	}
+	// check CA ceritificated and sslMode !=
 	if caCertFile != "" && sslMode != "DISABLED" {
 		tlsConfig, err = registerTLSConfig(caCertFile, u.Hostname())
 		if err != nil {
