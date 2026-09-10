@@ -2,7 +2,9 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -13,10 +15,15 @@ type Config struct {
 	SeedStaffName      string
 	SeedStaffEmail     string
 	SeedStaffPassword  string
+	CookieSecure       bool
 }
 
 func Load() (Config, error) {
 
+	cookieSecure, err := strconv.ParseBool(valueOrDefault("COOKIE_SECURE", "false"))
+	if err != nil {
+		return Config{}, fmt.Errorf("COOKIE_SECURE must be true or false: %w", err)
+	}
 	cfg := Config{
 		Port:               valueOrDefault("PORT", "8080"),
 		DatabaseURL:        os.Getenv("DATABASE_URL"),
@@ -25,6 +32,7 @@ func Load() (Config, error) {
 		SeedStaffName:      os.Getenv("SEED_STAFF_NAME"),
 		SeedStaffEmail:     os.Getenv("SEED_STAFF_EMAIL"),
 		SeedStaffPassword:  os.Getenv("SEED_STAFF_PASSWORD"),
+		CookieSecure:       cookieSecure,
 	}
 	if cfg.DatabaseURL == "" {
 		return Config{}, errors.New("DATABASE_URL is required")
