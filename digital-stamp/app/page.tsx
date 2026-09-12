@@ -27,6 +27,12 @@ export default function Home() {
           >
             Customer login
           </Link>
+          <Link
+            className="rounded-xl border border-sky-200 bg-sky-50 px-5 py-3 text-sm font-semibold text-sky-800 shadow-sm transition-[background-color,border-color,transform] duration-150 hover:border-sky-300 hover:bg-sky-100 active:scale-[0.96]"
+            href="/staff/login"
+          >
+            Staff login
+          </Link>
         </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-3">
