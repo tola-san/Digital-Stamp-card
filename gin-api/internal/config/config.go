@@ -47,8 +47,8 @@ func Load() (Config, error) {
 	if provided != 0 && provided != len(seedValues) {
 		return Config{}, errors.New("SEED_STAFF_NAME, SEED_STAFF_EMAIL, and SEED_STAFF_PASSWORD must be set together")
 	}
-	if cfg.SeedStaffPassword != "" && len(cfg.SeedStaffPassword) < 12 {
-		return Config{}, errors.New("SEED_STAFF_PASSWORD must contain at least 12 characters")
+	if cfg.SeedStaffPassword != "" && len(cfg.SeedStaffPassword) < 8 {
+		return Config{}, errors.New("SEED_STAFF_PASSWORD must contain at least 8 characters")
 	}
 	return cfg, nil
 }

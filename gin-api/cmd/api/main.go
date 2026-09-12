@@ -55,15 +55,19 @@ func main() {
 
 	customerRepository := repository.NewCustomerRepository(db.DB)
 	customerSessionRepository := repository.NewCustomerSessionRepository(db.DB)
+	staffRepository := repository.NewStaffRepository(db.DB)
+	staffSessionRepository := repository.NewStaffSessionRepository(db.DB)
 	transactionRepository := repository.NewTransactionRepository(db.DB)
 	customerService := service.NewCustomerService(customerRepository, transactionRepository)
 	customerSessionService := service.NewCustomerSessionService(customerRepository, customerSessionRepository)
+	staffService := service.NewStaffSessionService(staffRepository, staffSessionRepository)
 
 	router := httpdelivery.NewRouter(httpdelivery.RouterDependencies{
 		HealthChecker:          db,
 		FrontendURL:            cfg.FrontendURL,
 		CustomerService:        customerService,
 		CustomerSessionService: customerSessionService,
+		StaffService:           staffService,
 		CookieSecure:           cfg.CookieSecure,
 	})
 	server := &http.Server{Addr: ":" + cfg.Port, Handler: router, ReadHeaderTimeout: 5 * time.Second}

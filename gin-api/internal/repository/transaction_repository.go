@@ -28,8 +28,8 @@ func (r *TransactionRepository) ListByCustomerID(
 		WHERE customer_id = ?`
 	args := []any{customerID}
 	if cursor != nil {
-		query += ` AND (created_at < ? OR (created_at = ? AND id < ?))`
-		args = append(args, cursor.CreatedAt.UTC(), cursor.CreatedAt.UTC(), cursor.ID)
+		query += ` AND (created_at, id) < (?, ?)`
+		args = append(args, cursor.CreatedAt.UTC(), cursor.ID)
 	}
 	query += ` ORDER BY created_at DESC, id DESC LIMIT ?`
 	args = append(args, limit)

@@ -17,6 +17,7 @@ type RouterDependencies struct {
 	FrontendURL            string
 	CustomerService        CustomerApplication
 	CustomerSessionService SessionApplication
+	StaffService           StaffApplication
 	CookieSecure           bool
 }
 
@@ -26,6 +27,7 @@ func NewRouter(deps RouterDependencies) *gin.Engine {
 
 	api := router.Group("/api")
 	api.GET("/health", healthHandler(deps.HealthChecker))
+	
 	if deps.CustomerService != nil && deps.CustomerSessionService != nil {
 		customers := newCustomerHandler(deps.CustomerService, deps.CustomerSessionService, deps.CookieSecure)
 		api.POST("/customers", customers.register)
@@ -37,6 +39,15 @@ func NewRouter(deps RouterDependencies) *gin.Engine {
 		customerOnly.GET("/customers/me", customers.me)
 		customerOnly.GET("/customers/me/card", customers.card)
 		customerOnly.GET("/customers/me/transactions", customers.transactions)
+	}
+	if deps.StaffService != nil {
+		staff := newStaffHandler(deps.StaffService, deps.CookieSecure)
+		api.POST("/staff-sessions", staff.login)
+
+		staffOnly := api.Group("")
+		staffOnly.Use(staffAuth(deps.StaffService))
+		staffOnly.DELETE("/staff-sessions/current", staff.logout)
+		staffOnly.GET("/staff/me", staff.me)
 	}
 
 	router.NoRoute(func(c *gin.Context) {
