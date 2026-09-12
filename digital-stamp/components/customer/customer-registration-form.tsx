@@ -51,11 +51,11 @@ export function CustomerRegistrationForm() {
     const normalizedPhone = normalizePhone(phone);
 
     if (trimmedName.length < 2 || trimmedName.length > 100) {
-      errors.name = "Enter a name between 2 and 100 characters.";
+      errors.name = "សូមបញ្ចូលឈ្មោះចាប់ពី 2 ដល់ 100 តួអក្សរ។";
     }
 
     if (!internationalPhonePattern.test(normalizedPhone)) {
-      errors.phone = "Use international format, for example +855 12 345 678.";
+      errors.phone = "សូមប្រើទម្រង់អន្តរជាតិ ឧទាហរណ៍ +855 12 345 678។";
     }
 
     setFieldErrors(errors);
@@ -82,16 +82,16 @@ export function CustomerRegistrationForm() {
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.code === "PHONE_ALREADY_REGISTERED") {
-          setFieldErrors({ phone: "This phone number is already registered." });
+          setFieldErrors({ phone: "លេខទូរសព្ទនេះបានចុះឈ្មោះរួចហើយ។" });
         } else if (error.code === "INVALID_NAME") {
-          setFieldErrors({ name: error.message });
+          setFieldErrors({ name: "ឈ្មោះដែលបានបញ្ចូលមិនត្រឹមត្រូវទេ។" });
         } else if (error.code === "INVALID_PHONE") {
-          setFieldErrors({ phone: error.message });
+          setFieldErrors({ phone: "លេខទូរសព្ទដែលបានបញ្ចូលមិនត្រឹមត្រូវទេ។" });
         } else {
-          setFormError(error.message);
+          setFormError("មិនអាចបញ្ចប់ការចុះឈ្មោះបានទេ។ សូមព្យាយាមម្តងទៀត។");
         }
       } else {
-        setFormError("We could not connect to the service. Please try again.");
+        setFormError("មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។ សូមព្យាយាមម្តងទៀត។");
       }
     } finally {
       setIsSubmitting(false);
@@ -106,19 +106,19 @@ export function CustomerRegistrationForm() {
             <Check aria-hidden="true" className="size-8" strokeWidth={2.5} />
           </div>
           <p className="mt-6 text-sm font-semibold tracking-wide text-sky-700 uppercase">
-            Registration complete
+            ការចុះឈ្មោះបានជោគជ័យ
           </p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">
-            Welcome, {registration.customer.name}
+            សូមស្វាគមន៍ {registration.customer.name}
           </h2>
           <p className="mt-3 max-w-sm text-base leading-7 text-zinc-600">
-            Your digital stamp card is ready. Your session has been securely
-            saved on this device.
+            កាតត្រាឌីជីថលរបស់អ្នករួចរាល់ហើយ។ ការចូលប្រើរបស់អ្នកត្រូវបាន
+            រក្សាទុកដោយសុវត្ថិភាពនៅលើឧបករណ៍នេះ។
           </p>
 
           <div className="mt-8 flex w-full items-center justify-between rounded-2xl bg-sky-50 p-5 ring-1 ring-inset ring-sky-900/8">
             <div className="text-left">
-              <p className="text-sm font-medium text-sky-700">Starting balance</p>
+              <p className="text-sm font-medium text-sky-700">ចំនួនត្រាចាប់ផ្តើម</p>
               <p className="mt-1 text-sm text-sky-800/70">
                 {registration.customer.phone}
               </p>
@@ -127,7 +127,7 @@ export function CustomerRegistrationForm() {
               <span className="text-3xl font-semibold tabular-nums text-sky-700">
                 {registration.card.stamp_count}
               </span>
-              <p className="text-xs font-medium text-sky-800/70">stamps</p>
+              <p className="text-xs font-medium text-sky-800/70">ត្រា</p>
             </div>
           </div>
 
@@ -135,7 +135,7 @@ export function CustomerRegistrationForm() {
             className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-5 text-base font-semibold text-white shadow-[0_10px_24px_-12px_oklch(0.5_0.15_240/0.8)] transition-[background-color,box-shadow,transform] duration-150 hover:bg-sky-800 active:scale-[0.96]"
             href="/card"
           >
-            View my stamp card
+            មើលកាតត្រារបស់ខ្ញុំ
             <ArrowRight aria-hidden="true" className="size-5" strokeWidth={2} />
           </Link>
         </CardContent>
@@ -147,10 +147,10 @@ export function CustomerRegistrationForm() {
     <Card className="w-full gap-0 rounded-xl border-0 bg-white py-0 shadow-[0_24px_70px_-24px_oklch(0.32_0.08_235/0.35),0_2px_8px_oklch(0_0_0/0.06)] ring-1 ring-sky-950/8">
       <CardHeader className="gap-2 px-6 pt-7 pb-0 sm:px-9 sm:pt-9">
         <CardTitle className="text-2xl font-semibold tracking-tight text-zinc-950">
-          Create your account
+          បង្កើតគណនីរបស់អ្នក
         </CardTitle>
         <CardDescription className="text-base leading-6 text-zinc-600">
-          Enter your details to receive your digital stamp card.
+          បញ្ចូលព័ត៌មានរបស់អ្នក ដើម្បីទទួលបានកាតត្រាឌីជីថល។
         </CardDescription>
       </CardHeader>
 
@@ -162,7 +162,7 @@ export function CustomerRegistrationForm() {
                 className="mb-2 block text-sm font-medium text-zinc-800"
                 htmlFor="customer-name"
               >
-                Full name
+                ឈ្មោះពេញ
               </label>
               <div className="relative">
                 <UserRound
@@ -182,7 +182,7 @@ export function CustomerRegistrationForm() {
                     setName(event.target.value);
                     setFieldErrors((errors) => ({ ...errors, name: undefined }));
                   }}
-                  placeholder="Sokha Chan"
+                  placeholder="សុខា ចាន់"
                   type="text"
                   value={name}
                 />
@@ -200,7 +200,7 @@ export function CustomerRegistrationForm() {
                 className="mb-2 block text-sm font-medium text-zinc-800"
                 htmlFor="customer-phone"
               >
-                Phone number
+                លេខទូរសព្ទ
               </label>
               <div className="relative">
                 <Phone
@@ -232,7 +232,7 @@ export function CustomerRegistrationForm() {
                 </p>
               ) : (
                 <p className="mt-2 text-sm text-zinc-500" id="phone-hint">
-                  Include your country code. You will use this number to return.
+                  សូមបញ្ចូលលេខកូដប្រទេស។ អ្នកនឹងប្រើលេខនេះពេលត្រឡប់មកវិញ។
                 </p>
               )}
             </div>
@@ -257,28 +257,27 @@ export function CustomerRegistrationForm() {
             {isSubmitting ? (
               <>
                 <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
-                Creating your card…
+                កំពុងបង្កើតកាតរបស់អ្នក…
               </>
             ) : (
               <>
-                Create my stamp card
+                បង្កើតកាតត្រារបស់ខ្ញុំ
                 <ArrowRight aria-hidden="true" className="size-5" strokeWidth={2} />
               </>
             )}
           </Button>
 
           <p className="mt-4 text-center text-xs leading-5 text-zinc-500">
-            By continuing, you agree to keep your phone number associated with
-            this loyalty account.
+            ដោយបន្ត អ្នកយល់ព្រមរក្សាលេខទូរសព្ទនេះឱ្យភ្ជាប់ជាមួយគណនីសមាជិករបស់អ្នក។
           </p>
 
           <p className="mt-4 text-center text-sm text-zinc-600">
-            Already registered?{" "}
+            បានចុះឈ្មោះរួចហើយ?{" "}
             <Link
               className="font-semibold text-sky-700 underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-600/15"
               href="/login"
             >
-              Open your card
+              បើកកាតរបស់អ្នក
             </Link>
           </p>
         </form>

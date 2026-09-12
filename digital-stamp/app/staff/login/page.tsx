@@ -5,8 +5,8 @@ import { Gift, ShieldCheck } from "lucide-react";
 import { StaffLoginForm } from "@/components/staff/staff-login-form";
 
 export const metadata: Metadata = {
-  title: "Staff login | Digital Stamp Card",
-  description: "Secure access for Digital Stamp Card staff.",
+  title: "ចូលគណនីបុគ្គលិក | កាតត្រាឌីជីថល",
+  description: "ការចូលប្រើប្រកបដោយសុវត្ថិភាពសម្រាប់បុគ្គលិក។",
 };
 
 export default function StaffLoginPage() {
@@ -21,26 +21,26 @@ export default function StaffLoginPage() {
             <span className="flex size-10 items-center justify-center rounded-xl bg-sky-700 text-white shadow-sm transition-transform duration-150 group-hover:-rotate-3">
               <Gift aria-hidden="true" className="size-5" strokeWidth={2} />
             </span>
-            <span className="text-sm font-semibold tracking-tight sm:text-base">Digital Stamp</span>
+            <span className="text-sm font-semibold tracking-tight sm:text-base">កាតត្រាឌីជីថល</span>
           </Link>
           <div className="flex items-center gap-2 text-sm font-medium text-zinc-600">
             <ShieldCheck aria-hidden="true" className="size-4 text-sky-700" />
-            Staff portal
+            ផ្នែកបុគ្គលិក
           </div>
         </header>
 
         <div className="grid flex-1 items-center gap-12 py-12 lg:grid-cols-[1fr_29rem] lg:gap-20 lg:py-16">
           <section className="mx-auto max-w-xl lg:mx-0">
-            <p className="text-sm font-semibold tracking-wide text-sky-700 uppercase">Shop operations</p>
+            <p className="text-sm font-semibold tracking-wide text-sky-700 uppercase">ការគ្រប់គ្រងហាង</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-[-0.035em] text-balance sm:text-5xl lg:text-6xl lg:leading-[1.05]">
-              Welcome back to your shop.
+              សូមស្វាគមន៍មកកាន់ហាងរបស់អ្នកវិញ។
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-8 text-zinc-600">
-              Sign in to manage loyalty activity and serve returning customers.
+              ចូលគណនីដើម្បីគ្រប់គ្រងកម្មវិធីសមាជិក និងបម្រើអតិថិជនដែលត្រឡប់មកវិញ។
             </p>
           </section>
 
-          <section aria-label="Staff login"><StaffLoginForm /></section>
+          <section aria-label="ការចូលគណនីបុគ្គលិក"><StaffLoginForm /></section>
         </div>
       </div>
     </main>

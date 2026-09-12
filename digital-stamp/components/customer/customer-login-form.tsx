@@ -36,7 +36,7 @@ export function CustomerLoginForm() {
 
     const normalizedPhone = normalizePhone(phone);
     if (!internationalPhonePattern.test(normalizedPhone)) {
-      setPhoneError("Use international format, for example +855 12 345 678.");
+      setPhoneError("សូមប្រើទម្រង់អន្តរជាតិ ឧទាហរណ៍ +855 12 345 678។");
       return;
     }
 
@@ -51,14 +51,14 @@ export function CustomerLoginForm() {
           error.code === "INVALID_CREDENTIALS" ||
           error.code === "CUSTOMER_NOT_FOUND"
         ) {
-          setPhoneError("We could not find an account with this phone number.");
+          setPhoneError("រកមិនឃើញគណនីដែលប្រើលេខទូរសព្ទនេះទេ។");
         } else if (error.code === "INVALID_PHONE") {
-          setPhoneError(error.message);
+          setPhoneError("លេខទូរសព្ទដែលបានបញ្ចូលមិនត្រឹមត្រូវទេ។");
         } else {
-          setFormError(error.message);
+          setFormError("មិនអាចចូលគណនីបានទេ។ សូមព្យាយាមម្តងទៀត។");
         }
       } else {
-        setFormError("We could not connect to the service. Please try again.");
+        setFormError("មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។ សូមព្យាយាមម្តងទៀត។");
       }
     } finally {
       setIsSubmitting(false);
@@ -69,10 +69,10 @@ export function CustomerLoginForm() {
     <Card className="w-full gap-0 rounded-3xl border-0 bg-white py-0 shadow-[0_24px_70px_-24px_oklch(0.32_0.08_235/0.35),0_2px_8px_oklch(0_0_0/0.06)] ring-1 ring-sky-950/8">
       <CardHeader className="gap-2 px-6 pt-7 pb-0 sm:px-9 sm:pt-9">
         <CardTitle className="text-2xl font-semibold tracking-tight text-zinc-950">
-          Welcome back
+          សូមស្វាគមន៍មកវិញ
         </CardTitle>
         <CardDescription className="text-base leading-6 text-zinc-600">
-          Enter the phone number connected to your stamp card.
+          បញ្ចូលលេខទូរសព្ទដែលភ្ជាប់ជាមួយកាតត្រារបស់អ្នក។
         </CardDescription>
       </CardHeader>
 
@@ -82,7 +82,7 @@ export function CustomerLoginForm() {
             className="mb-2 block text-sm font-medium text-zinc-800"
             htmlFor="login-phone"
           >
-            Phone number
+            លេខទូរសព្ទ
           </label>
           <div className="relative">
             <Phone
@@ -118,7 +118,7 @@ export function CustomerLoginForm() {
             </p>
           ) : (
             <p className="mt-2 text-sm text-zinc-500" id="login-phone-hint">
-              Include the same country code used during registration.
+              សូមប្រើលេខកូដប្រទេសដូចគ្នានឹងពេលចុះឈ្មោះ។
             </p>
           )}
 
@@ -141,23 +141,23 @@ export function CustomerLoginForm() {
             {isSubmitting ? (
               <>
                 <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
-                Opening your card…
+                កំពុងបើកកាតរបស់អ្នក…
               </>
             ) : (
               <>
-                Open my stamp card
+                បើកកាតត្រារបស់ខ្ញុំ
                 <ArrowRight aria-hidden="true" className="size-5" strokeWidth={2} />
               </>
             )}
           </Button>
 
           <p className="mt-6 text-center text-sm text-zinc-600">
-            New customer?{" "}
+            អតិថិជនថ្មី?{" "}
             <Link
               className="font-semibold text-sky-700 underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-600/15"
               href="/register"
             >
-              Create a stamp card
+              បង្កើតកាតត្រា
             </Link>
           </p>
         </form>

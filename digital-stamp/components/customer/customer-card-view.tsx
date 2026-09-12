@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   CircleAlert,
+  Coffee,
   Gift,
   LoaderCircle,
   LogOut,
   RefreshCw,
   Sparkles,
-  Stamp,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,8 +40,6 @@ async function fetchCardData(): Promise<CardData> {
 }
 
 export function CustomerCardView() {
-
-  
   const router = useRouter();
   const [data, setData] = useState<CardData | null>(null);
   const [error, setError] = useState("");
@@ -69,8 +67,8 @@ export function CustomerCardView() {
 
         setError(
           requestError instanceof ApiError
-            ? requestError.message
-            : "We could not load your stamp card.",
+            ? "មិនអាចបង្ហាញកាតត្រារបស់អ្នកបានទេ។ សូមព្យាយាមម្តងទៀត។"
+            : "មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។",
         );
       })
       .finally(() => {
@@ -98,8 +96,8 @@ export function CustomerCardView() {
 
       setError(
         requestError instanceof ApiError
-          ? requestError.message
-          : "We could not load your stamp card.",
+          ? "មិនអាចបង្ហាញកាតត្រារបស់អ្នកបានទេ។ សូមព្យាយាមម្តងទៀត។"
+          : "មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។",
       );
     } finally {
       setIsLoading(false);
@@ -116,8 +114,8 @@ export function CustomerCardView() {
     } catch (requestError) {
       setError(
         requestError instanceof ApiError
-          ? requestError.message
-          : "We could not log you out. Please try again.",
+          ? "មិនអាចចាកចេញពីគណនីបានទេ។ សូមព្យាយាមម្តងទៀត។"
+          : "មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។ សូមព្យាយាមម្តងទៀត។",
       );
       setIsLoggingOut(false);
     }
@@ -128,7 +126,7 @@ export function CustomerCardView() {
       <div className="flex min-h-[65vh] items-center justify-center" role="status">
         <div className="flex flex-col items-center gap-3 text-sky-800">
           <LoaderCircle aria-hidden="true" className="size-8 animate-spin" />
-          <p className="text-sm font-medium">Loading your stamp card…</p>
+          <p className="text-sm font-medium">កំពុងបង្ហាញកាតត្រារបស់អ្នក…</p>
         </div>
       </div>
     );
@@ -140,10 +138,10 @@ export function CustomerCardView() {
         <div className="w-full rounded-3xl bg-white p-8 shadow-[0_24px_70px_-24px_oklch(0.32_0.08_235/0.3)] ring-1 ring-sky-950/8">
           <CircleAlert aria-hidden="true" className="mx-auto size-10 text-red-600" />
           <h1 className="mt-4 text-2xl font-semibold text-zinc-950">
-            Card unavailable
+            មិនអាចបង្ហាញកាតបានទេ
           </h1>
           <p className="mt-2 text-sm leading-6 text-zinc-600">
-            {error || "We could not load your stamp card."}
+            {error || "មិនអាចបង្ហាញកាតត្រារបស់អ្នកបានទេ។"}
           </p>
           <Button
             className="mt-6 h-11 w-full rounded-xl bg-sky-700 text-white transition-[background-color,transform] duration-150 hover:bg-sky-800 active:scale-[0.96] active:translate-y-0"
@@ -151,7 +149,7 @@ export function CustomerCardView() {
             type="button"
           >
             <RefreshCw aria-hidden="true" />
-            Try again
+            ព្យាយាមម្តងទៀត
           </Button>
         </div>
       </div>
@@ -186,7 +184,7 @@ export function CustomerCardView() {
               <Gift aria-hidden="true" className="size-5" strokeWidth={2} />
             </span>
             <span className="text-sm font-semibold tracking-tight sm:text-base">
-              Digital Stamp
+              កាតត្រាឌីជីថល
             </span>
           </Link>
 
@@ -203,19 +201,19 @@ export function CustomerCardView() {
             ) : (
               <LogOut aria-hidden="true" />
             )}
-            <span className="hidden sm:inline">Log out</span>
+            <span className="hidden sm:inline">ចាកចេញ</span>
           </Button>
         </header>
 
         <section className="mx-auto max-w-2xl py-12 sm:py-16">
           <div className="mb-7">
             <p className="text-sm font-semibold tracking-wide text-sky-700 uppercase">
-              Customer card
+              កាតអតិថិជន
             </p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Hello, {customer.name}
+              សួស្តី {customer.name}
             </h1>
-            <p className="mt-2 text-zinc-600">Your reward progress is up to date.</p>
+            <p className="mt-2 text-zinc-600">ដំណើរឆ្ពោះទៅរករង្វាន់របស់អ្នកបានធ្វើបច្ចុប្បន្នភាព។</p>
           </div>
 
           <div className="overflow-hidden rounded-[2rem] bg-sky-800 text-white shadow-[0_30px_80px_-28px_oklch(0.32_0.1_235/0.75),0_3px_10px_oklch(0_0_0/0.12)] ring-1 ring-white/10">
@@ -228,9 +226,9 @@ export function CustomerCardView() {
               <div className="relative flex items-start justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-2 text-sky-100">
-                    <Stamp aria-hidden="true" className="size-5" strokeWidth={1.8} />
+                    <Coffee aria-hidden="true" className="size-5" strokeWidth={1.8} />
                     <span className="text-sm font-semibold tracking-wide uppercase">
-                      Loyalty card
+                      រង្វាន់កាហ្វេ
                     </span>
                   </div>
                   <p className="mt-3 text-2xl font-semibold tracking-tight">
@@ -242,7 +240,7 @@ export function CustomerCardView() {
                   <p className="text-3xl font-semibold tabular-nums">
                     {card.stamp_count}
                   </p>
-                  <p className="text-xs font-medium text-sky-100/75">stamps</p>
+                  <p className="text-xs font-medium text-sky-100/75">ត្រា</p>
                 </div>
               </div>
 
@@ -252,19 +250,29 @@ export function CustomerCardView() {
 
                   return (
                     <div
-                      aria-label={`Stamp ${index + 1}: ${isCollected ? "collected" : "empty"}`}
-                      className={`flex aspect-square items-center justify-center rounded-full ring-1 transition-[background-color,color,transform] duration-150 ${
+                      aria-label={`ត្រាទី ${index + 1}: ${isCollected ? "បានប្រមូល" : "មិនទាន់មាន"}`}
+                      className={`relative flex aspect-square items-center justify-center rounded-full ring-1 transition-[background-color,color,box-shadow,transform] duration-150 ${
                         isCollected
-                          ? "bg-amber-300 text-sky-950 ring-amber-100/70"
+                          ? "bg-amber-300 text-sky-950 shadow-[inset_0_1px_0_oklch(1_0_0/0.5),0_8px_20px_-12px_oklch(0.8_0.15_80/0.9)] ring-amber-100/70"
                           : "bg-white/8 text-white/35 ring-white/18"
                       }`}
                       key={index}
                     >
-                      {isCollected ? (
-                        <Stamp aria-hidden="true" className="size-5 sm:size-6" strokeWidth={2} />
-                      ) : (
-                        <span className="text-sm font-semibold tabular-nums">{index + 1}</span>
-                      )}
+                      <Coffee
+                        aria-hidden="true"
+                        className="size-7 sm:size-9"
+                        strokeWidth={isCollected ? 2 : 1.5}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`absolute right-[13%] bottom-[10%] flex size-5 items-center justify-center rounded-full text-[0.65rem] font-semibold tabular-nums sm:size-6 sm:text-xs ${
+                          isCollected
+                            ? "bg-sky-950/12 text-sky-950/70"
+                            : "bg-white/8 text-white/45"
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
                     </div>
                   );
                 })}
@@ -272,11 +280,11 @@ export function CustomerCardView() {
 
               <div className="relative mt-8">
                 <div className="flex items-center justify-between text-xs font-medium text-sky-100/80">
-                  <span>{progress}% complete</span>
-                  <span>{requiredStamps} stamps for a reward</span>
+                  <span>បានបំពេញ {progress}%</span>
+                  <span>{requiredStamps} ត្រា ដើម្បីទទួលរង្វាន់</span>
                 </div>
                 <div
-                  aria-label={`${progress}% toward your next reward`}
+                  aria-label={`បានបំពេញ ${progress}% ឆ្ពោះទៅរករង្វាន់បន្ទាប់`}
                   aria-valuemax={100}
                   aria-valuemin={0}
                   aria-valuenow={progress}
@@ -298,13 +306,13 @@ export function CustomerCardView() {
               <div>
                 <p className="font-semibold">
                   {rewardReady
-                    ? "Your reward is ready"
-                    : `${stampsRemaining} ${stampsRemaining === 1 ? "stamp" : "stamps"} until your reward`}
+                    ? "រង្វាន់របស់អ្នករួចរាល់ហើយ"
+                    : `នៅសល់ ${stampsRemaining} ត្រាទៀត ដើម្បីទទួលរង្វាន់`}
                 </p>
                 <p className="mt-0.5 text-sm text-sky-100/70">
                   {rewardReady
-                    ? "Ask a staff member to redeem it on your next visit."
-                    : "Show this card when you visit to keep collecting."}
+                    ? "សូមប្រាប់បុគ្គលិកដើម្បីប្តូរយករង្វាន់នៅពេលអ្នកមកលើកក្រោយ។"
+                    : "បង្ហាញកាតនេះពេលមកហាង ដើម្បីបន្តប្រមូលត្រា។"}
                 </p>
               </div>
             </div>

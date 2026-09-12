@@ -5,8 +5,8 @@ import { Gift, ShieldCheck, Smartphone } from "lucide-react";
 import { CustomerLoginForm } from "@/components/customer/customer-login-form";
 
 export const metadata: Metadata = {
-  title: "Customer login | Digital Stamp Card",
-  description: "Open your digital stamp card using your phone number.",
+  title: "ចូលគណនីអតិថិជន | កាតត្រាឌីជីថល",
+  description: "បើកកាតត្រាឌីជីថលរបស់អ្នកដោយប្រើលេខទូរសព្ទ។",
 };
 
 export default function LoginPage() {
@@ -31,12 +31,12 @@ export default function LoginPage() {
               <Gift aria-hidden="true" className="size-5" strokeWidth={2} />
             </span>
             <span className="text-sm font-semibold tracking-tight sm:text-base">
-              Digital Stamp
+              កាតត្រាឌីជីថល
             </span>
           </Link>
           <div className="hidden items-center gap-2 text-sm font-medium text-zinc-600 sm:flex">
             <ShieldCheck aria-hidden="true" className="size-4 text-sky-700" />
-            Secure customer access
+            ការចូលប្រើមានសុវត្ថិភាព
           </div>
         </header>
 
@@ -46,15 +46,15 @@ export default function LoginPage() {
               <Smartphone aria-hidden="true" className="size-7" strokeWidth={1.8} />
             </span>
             <h1 className="mt-6 text-4xl font-semibold tracking-[-0.035em] text-balance sm:text-5xl lg:text-6xl lg:leading-[1.05]">
-              Your rewards are waiting.
+              រង្វាន់របស់អ្នកកំពុងរង់ចាំ។
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-8 text-zinc-600">
-              Come back anytime and use your registered phone number to see
-              your stamps and reward progress.
+              ត្រឡប់មកវិញគ្រប់ពេល ហើយប្រើលេខទូរសព្ទដែលបានចុះឈ្មោះ
+              ដើម្បីមើលត្រា និងដំណើរឆ្ពោះទៅរករង្វាន់របស់អ្នក។
             </p>
           </section>
 
-          <section aria-label="Customer login">
+          <section aria-label="ការចូលគណនីអតិថិជន">
             <CustomerLoginForm />
           </section>
         </div>

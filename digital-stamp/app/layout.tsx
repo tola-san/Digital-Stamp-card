@@ -1,21 +1,7 @@
 import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Kantumruy_Pro,
-} from "next/font/google";
+import { Kantumruy_Pro } from "next/font/google";
 
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const kantumruyPro = Kantumruy_Pro({
   variable: "--font-kantumruy-pro",
@@ -24,8 +10,8 @@ const kantumruyPro = Kantumruy_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Stamp Card",
-  description: "A simple digital loyalty card for local businesses.",
+  title: "កាតត្រាឌីជីថល",
+  description: "កាតសមាជិកឌីជីថលដ៏សាមញ្ញសម្រាប់អាជីវកម្មក្នុងស្រុក។",
 };
 
 export default function RootLayout({
@@ -35,9 +21,8 @@ export default function RootLayout({
     <html
       lang="km"
       className={`
-        ${geistSans.variable}
-        ${geistMono.variable}
         ${kantumruyPro.variable}
+        ${kantumruyPro.className}
         h-full
         antialiased
       `}
