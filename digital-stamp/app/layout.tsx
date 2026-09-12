@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Kantumruy_Pro,
+} from "next/font/google";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +17,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const kantumruyPro = Kantumruy_Pro({
+  variable: "--font-kantumruy-pro",
+  subsets: ["khmer", "latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Digital Stamp Card",
   description: "A simple digital loyalty card for local businesses.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="km"
+      className={`
+        ${geistSans.variable}
+        ${geistMono.variable}
+        ${kantumruyPro.variable}
+        h-full
+        antialiased
+      `}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+      </body>
     </html>
   );
 }

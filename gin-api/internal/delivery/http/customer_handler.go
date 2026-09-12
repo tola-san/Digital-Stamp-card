@@ -14,6 +14,7 @@ import (
 
 const customerSessionCookie = "customer_session"
 
+// CustomerApplication defines customer use cases exposed to HTTP handlers.
 type CustomerApplication interface {
 	Register(context.Context, service.RegisterCustomerInput) (service.RegistrationResult, error)
 	GetCustomer(context.Context, string) (domain.Customer, error)
@@ -47,6 +48,7 @@ func newCustomerHandler(customers CustomerApplication, sessions SessionApplicati
 }
 
 func (h *customerHandler) register(c *gin.Context) {
+
 	var request registerCustomerRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		writeError(c, http.StatusBadRequest, "INVALID_REQUEST", "name and phone are required")

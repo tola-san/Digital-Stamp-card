@@ -118,6 +118,7 @@ func TestRegisterCustomerMapsDuplicatePhoneToConflict(t *testing.T) {
 }
 
 func TestProtectedCustomerCardUsesAuthenticatedCustomer(t *testing.T) {
+
 	customers := &customerApplicationStub{card: domain.StampCard{
 		ID: "card-1", CustomerID: "customer-1", StampCount: 4, RequiredStamps: 10,
 	}}

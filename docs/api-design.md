@@ -1,6 +1,6 @@
 # Digital Stamp Card API Design
 
-This document is the API contract for the Digital Stamp Card backend. It separates endpoints that are live today from endpoints planned for the loyalty MVP.
+This document is the API contract for the Digital Stamp Card backend. Health and customer endpoints are implemented; staff, QR, and reward endpoints remain planned for the loyalty MVP.
 
 ## Base URLs
 
@@ -38,9 +38,9 @@ Errors are wrapped in `error`:
 
 ### Authentication
 
-Customer and staff sessions will use secure, HTTP-only cookies. Browser requests must include credentials. Staff-only endpoints require an authenticated staff session; customer-only endpoints require an authenticated customer session.
+Customer sessions use secure, HTTP-only cookies. Browser requests must include credentials. Staff sessions will use the same approach when the staff API is implemented. Staff-only endpoints require an authenticated staff session; customer-only endpoints require an authenticated customer session.
 
-## Implemented endpoint
+## Implemented endpoints
 
 ### `GET /health`
 
@@ -67,15 +67,11 @@ Checks that the API and MySQL connection are available.
 }
 ```
 
-## Planned MVP endpoints
-
-The endpoints below are API design targets. They are not implemented yet.
-
 ### Customer session and profile
 
 | Method | Path | Session | Purpose |
 | --- | --- | --- | --- |
-| `POST` | `/customers` | Public | Register a customer and create their card. |
+| `POST` | `/customers` | Public | Register a customer, create their card, and sign in. |
 | `POST` | `/customer-sessions` | Public | Start a customer session using a phone number. |
 | `DELETE` | `/customer-sessions/current` | Customer | End the current customer session. |
 | `GET` | `/customers/me` | Customer | Get the signed-in customer. |
@@ -92,6 +88,8 @@ The endpoints below are API design targets. They are not implemented yet.
 ```
 
 **Response — `201 Created`**
+
+The response sets a 30-day `customer_session` HTTP-only cookie. A customer registers only once; a duplicate normalized phone number returns `409 Conflict`.
 
 ```json
 {
@@ -110,6 +108,22 @@ The endpoints below are API design targets. They are not implemented yet.
 }
 ```
 
+#### `POST /customer-sessions`
+
+```json
+{
+  "phone": "+85512345678"
+}
+```
+
+The phone-only MVP login sets a new 30-day `customer_session` HTTP-only cookie. An unknown phone number returns a generic `401 INVALID_CREDENTIALS` response. Phone-only login does not verify ownership of the number and must be upgraded before the application handles sensitive customer data.
+
+`GET /customers/me`, `GET /customers/me/card`, `GET /customers/me/transactions`, and `DELETE /customer-sessions/current` require the customer cookie. Transaction history supports `limit` (default 20, maximum 100) and opaque `cursor` query parameters.
+
+## Staff endpoints
+
+The endpoints below are API design targets. They are not implemented yet.
+
 ### Staff authentication and customers
 
 | Method | Path | Session | Purpose |
@@ -120,6 +134,8 @@ The endpoints below are API design targets. They are not implemented yet.
 | `GET` | `/staff/customers` | Staff | List and search customers. |
 | `GET` | `/staff/customers/:customerId` | Staff | Get customer, card, and recent activity. |
 | `POST` | `/staff/customers/:customerId/stamps` | Staff | Add or reverse a stamp with an audit record. |
+
+Staff session login, logout, and profile are implemented. Customer management and stamp operations remain planned.
 
 #### `POST /staff-sessions`
 

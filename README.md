@@ -295,9 +295,11 @@ GET /api/health
 
 ```http
 POST /api/customers
-GET  /api/customers/:id
-GET  /api/customers/:id/card
-GET  /api/customers/:id/history
+POST /api/customer-sessions
+DELETE /api/customer-sessions/current
+GET  /api/customers/me
+GET  /api/customers/me/card
+GET  /api/customers/me/transactions
 ```
 
 ---
@@ -305,10 +307,12 @@ GET  /api/customers/:id/history
 ## Staff
 
 ```http
-POST /api/staff/login
-POST /api/staff/logout
-GET  /api/staff/customers
+POST   /api/staff-sessions
+DELETE /api/staff-sessions/current
+GET    /api/staff/me
 ```
+
+Customer management endpoints are planned for the next staff API step.
 
 ---
 
@@ -384,10 +388,12 @@ Profile
 # Customer Portal Pages
 
 ```text
-/customer
-/customer/history
-/customer/rewards
+/register
+/login
+/card
 ```
+
+Customer history and rewards pages are planned.
 
 Customer portal is designed primarily for mobile browsers.
 
@@ -460,6 +466,20 @@ Run backend:
 go run ./cmd/api
 ```
 
+For local XAMPP MariaDB on Windows, create the local database/user once with
+`gin-api/scripts/setup-xampp.sql`, then run:
+
+```powershell
+.\run-local.ps1
+```
+
+To create the first local staff account, run the interactive seed launcher
+instead. It asks for the password securely and starts the API:
+
+```powershell
+.\seed-staff-local.ps1
+```
+
 API:
 
 ```text
@@ -485,7 +505,7 @@ cd digital-stamp
 Install dependencies:
 
 ```bash
-npm install
+bun install
 ```
 
 Copy `.env.example` to `.env.local` and set:
@@ -497,7 +517,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 Run frontend:
 
 ```bash
-npm run dev
+bun dev
 ```
 
 Open:
