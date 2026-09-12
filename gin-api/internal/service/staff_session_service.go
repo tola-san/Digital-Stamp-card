@@ -12,7 +12,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const StaffSessionDuration = 12 * time.Hour
+
+// Define sesesion login if over 12hour expration 
+const StaffSessionDuration = 1 * time.Hour
 
 
 //   Dummy password any staff account
