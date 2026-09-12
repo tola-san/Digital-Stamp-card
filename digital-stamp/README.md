@@ -9,7 +9,9 @@ The customer and staff web experience for Digital Stamp Card, built with Next.js
 3. Start the frontend with `bun run dev`.
 4. Open <http://localhost:3000>.
 
-The frontend expects the Go API at `NEXT_PUBLIC_API_URL`, which defaults to `http://localhost:8080/api`.
+The browser calls the same-origin `/api` path. Next.js proxies those requests to
+`API_PROXY_TARGET`, which defaults to the deployed Render API. Set it to
+`http://localhost:8080/api` for local development.
 
 ## Commands
 

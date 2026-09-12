@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
+export const API_URL = "/api";
 
 /* Error response returned by the Gin API. */
 type ApiErrorBody = {
@@ -29,7 +28,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10_000,
+  timeout: 30_000,
 });
 
 api.interceptors.response.use(
