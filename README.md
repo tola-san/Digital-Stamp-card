@@ -511,7 +511,7 @@ bun install
 Copy `.env.example` to `.env.local` and set:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+API_PROXY_TARGET=http://localhost:8080/api
 ```
 
 Run frontend:
