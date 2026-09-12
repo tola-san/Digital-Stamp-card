@@ -1,7 +1,7 @@
-
 import axios, { AxiosError } from "axios";
 
-export const API_URL = "http://localhost:8080/api";
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
 
 /* Error response returned by the Gin API. */
 type ApiErrorBody = {
