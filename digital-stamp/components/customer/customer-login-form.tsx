@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ApiError } from "@/lib/api";
-import { loginCustomer } from "@/lib/customer-api";
+import { loginCustomer } from "@/services/customer-service";
 
 const internationalPhonePattern = /^\+[1-9][0-9]{7,14}$/;
 

@@ -7,7 +7,7 @@ import { CircleAlert, Gift, LoaderCircle, LogOut, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
-import { getCurrentStaff, logoutStaff } from "@/lib/staff-api";
+import { getCurrentStaff, logoutStaff } from "@/services/staff-service";
 import type { Staff } from "@/types/domain";
 
 export function StaffDashboard() {

@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ApiError } from "@/lib/api";
-import { registerCustomer } from "@/lib/customer-api";
+import { registerCustomer } from "@/services/customer-service";
 import type { RegisterCustomerResult } from "@/types/customer";
 
 type FieldErrors = {
