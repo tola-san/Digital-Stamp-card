@@ -1,6 +1,4 @@
 import { api } from "@/lib/api";
-
-
 import type {
   ApiResponse,
   CurrentCustomerResult,

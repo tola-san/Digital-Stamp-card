@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ApiError } from "@/lib/api";
-import { loginStaff } from "@/lib/staff-api";
+import { loginStaff } from "@/services/staff-service";
 
 export function StaffLoginForm() {
   const router = useRouter();

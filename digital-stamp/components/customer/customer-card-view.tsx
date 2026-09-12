@@ -19,7 +19,7 @@ import {
   getCurrentCustomer,
   getCustomerCard,
   logoutCustomer,
-} from "@/lib/customer-api";
+} from "@/services/customer-service";
 import type { Customer, StampCard } from "@/types/domain";
 
 type CardData = {
