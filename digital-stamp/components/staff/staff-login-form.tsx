@@ -36,7 +36,7 @@ export function StaffLoginForm() {
     setFormError("");
 
     if (!email.trim() || !password) {
-      setFormError("Enter both your email and password.");
+      setFormError("សូមបញ្ចូលអ៊ីមែល និងពាក្យសម្ងាត់។");
       return;
     }
 
@@ -47,12 +47,12 @@ export function StaffLoginForm() {
       router.replace("/staff/dashboard");
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        setFormError("The email or password is incorrect.");
+        setFormError("អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវទេ។");
       } else {
         setFormError(
           error instanceof ApiError
-            ? error.message
-            : "We could not connect to the service. Please try again.",
+            ? "មិនអាចចូលគណនីបានទេ។ សូមព្យាយាមម្តងទៀត។"
+            : "មិនអាចភ្ជាប់ទៅសេវាកម្មបានទេ។ សូមព្យាយាមម្តងទៀត។",
         );
       }
     } finally {
@@ -67,17 +67,17 @@ export function StaffLoginForm() {
           <LockKeyhole aria-hidden="true" className="size-5" strokeWidth={1.8} />
         </span>
         <CardTitle className="text-2xl font-semibold tracking-tight text-zinc-950">
-          Staff sign in
+          ចូលគណនីបុគ្គលិក
         </CardTitle>
         <CardDescription className="text-base leading-6 text-zinc-600">
-          Use the account created by the staff seeder.
+          ប្រើគណនីបុគ្គលិកដែលបានបង្កើតរួច។
         </CardDescription>
       </CardHeader>
 
       <CardContent className="px-6 pt-7 pb-7 sm:px-9 sm:pt-8 sm:pb-9">
         <form noValidate onSubmit={handleSubmit}>
           <label className="mb-2 block text-sm font-medium text-zinc-800" htmlFor="staff-email">
-            Email address
+            អាសយដ្ឋានអ៊ីមែល
           </label>
           <div className="relative">
             <Mail aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-zinc-400" strokeWidth={1.8} />
@@ -98,7 +98,7 @@ export function StaffLoginForm() {
           </div>
 
           <label className="mt-5 mb-2 block text-sm font-medium text-zinc-800" htmlFor="staff-password">
-            Password
+            ពាក្យសម្ងាត់
           </label>
           <div className="relative">
             <LockKeyhole aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-zinc-400" strokeWidth={1.8} />
@@ -112,13 +112,13 @@ export function StaffLoginForm() {
                 setPassword(event.target.value);
                 setFormError("");
               }}
-              placeholder="At least 8 characters"
+              placeholder="យ៉ាងតិច 8 តួអក្សរ"
               required
               type={showPassword ? "text" : "password"}
               value={password}
             />
             <button
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-label={showPassword ? "លាក់ពាក្យសម្ងាត់" : "បង្ហាញពាក្យសម្ងាត់"}
               className="absolute top-1/2 right-2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-zinc-500 outline-none transition-[background-color,color,transform] duration-150 hover:bg-zinc-100 hover:text-zinc-800 focus-visible:ring-4 focus-visible:ring-sky-600/15 active:scale-[0.96]"
               onClick={() => setShowPassword((current) => !current)}
               type="button"
@@ -140,9 +140,9 @@ export function StaffLoginForm() {
             type="submit"
           >
             {isSubmitting ? (
-              <><LoaderCircle aria-hidden="true" className="size-5 animate-spin" />Signing in…</>
+              <><LoaderCircle aria-hidden="true" className="size-5 animate-spin" />កំពុងចូលគណនី…</>
             ) : (
-              <>Open staff dashboard<ArrowRight aria-hidden="true" className="size-5" strokeWidth={2} /></>
+              <>បើកផ្ទាំងគ្រប់គ្រង<ArrowRight aria-hidden="true" className="size-5" strokeWidth={2} /></>
             )}
           </Button>
         </form>
