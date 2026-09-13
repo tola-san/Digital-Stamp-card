@@ -18,6 +18,7 @@ type RouterDependencies struct {
 	CustomerService        CustomerApplication
 	CustomerSessionService SessionApplication
 	StaffService           StaffApplication
+	QRStampService         QRStampApplication
 	CookieSecure           bool
 }
 
@@ -27,7 +28,7 @@ func NewRouter(deps RouterDependencies) *gin.Engine {
 
 	api := router.Group("/api")
 	api.GET("/health", healthHandler(deps.HealthChecker))
-	
+
 	if deps.CustomerService != nil && deps.CustomerSessionService != nil {
 		customers := newCustomerHandler(deps.CustomerService, deps.CustomerSessionService, deps.CookieSecure)
 		api.POST("/customers", customers.register)
@@ -48,6 +49,21 @@ func NewRouter(deps RouterDependencies) *gin.Engine {
 		staffOnly.Use(staffAuth(deps.StaffService))
 		staffOnly.DELETE("/staff-sessions/current", staff.logout)
 		staffOnly.GET("/staff/me", staff.me)
+	}
+	if deps.QRStampService != nil && deps.CustomerSessionService != nil {
+		qr := newQRStampHandler(deps.QRStampService)
+		customerQR := api.Group("")
+		customerQR.Use(customerAuth(deps.CustomerSessionService))
+		customerQR.POST("/customers/me/qr-tokens", qr.generate)
+		customerQR.GET("/customers/me/qr-tokens/current", qr.current)
+		customerQR.DELETE("/customers/me/qr-tokens/:tokenId", qr.cancel)
+	}
+	if deps.QRStampService != nil && deps.StaffService != nil {
+		qr := newQRStampHandler(deps.QRStampService)
+		staffScan := api.Group("")
+		staffScan.Use(staffAuth(deps.StaffService))
+		staffScan.POST("/staff/stamp-scans/preview", qr.preview)
+		staffScan.POST("/staff/stamp-scans/:scanId/confirm", qr.confirm)
 	}
 
 	router.NoRoute(func(c *gin.Context) {

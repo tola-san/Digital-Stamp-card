@@ -15,11 +15,15 @@ import (
 	"time"
 
 	"github.com/go-sql-driver/mysql"
+	gormmysql "gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-// DB wraps sql.DB to keep the health-check interface context-aware.
+// DB exposes GORM for application persistence and the underlying sql.DB for
+// connection-pool management and compatibility with existing repositories.
 type DB struct {
 	*sql.DB
+	ORM *gorm.DB
 }
 
 var (
@@ -49,8 +53,22 @@ func Open(ctx context.Context, databaseURL, caCertFile string) (*DB, error) {
 		pool.Close()
 		return nil, fmt.Errorf("ping database: %w", err)
 	}
-	return &DB{DB: pool}, nil
+
+	orm, err := gorm.Open(gormmysql.New(gormmysql.Config{Conn: pool}), &gorm.Config{})
+	if err != nil {
+		pool.Close()
+		return nil, fmt.Errorf("initialize GORM: %w", err)
+	}
+	return &DB{DB: pool, ORM: orm}, nil
 }
+
+func (db *DB) Close() error {
+	return db.SQLDB().Close()
+}
+
+// SQLDB returns the underlying pool for repositories that have not yet been
+// converted from database/sql queries to GORM.
+func (db *DB) SQLDB() *sql.DB { return db.DB }
 
 // mysqlDSN converts the mysql:// URL supplied by Aiven into the native DSN
 // expected by go-sql-driver/mysql. ssl-mode=REQUIRED encrypts without verifying

@@ -36,13 +36,13 @@ export type Reward = {
 export type QRStatus = "ACTIVE" | "USED" | "EXPIRED" | "CANCELLED"
 export type TransactionType = "STAMP_ADDED" | "STAMP_REVERSED" | "REWARD_REDEEMED"
 
-export type StampQR = {
+export type CustomerQRToken = {
   id: string
-  staff_id: string
+  customer_id: string
   status: QRStatus
   expires_at: string
   used_at?: string
-  used_by_customer_id?: string
+  used_by_staff_id?: string
   created_at: string
 }
 
@@ -51,7 +51,7 @@ export type StampTransaction = {
   customer_id: string
   staff_id?: string
   reward_id?: string
-  stamp_qr_id?: string
+  customer_qr_token_id?: string
   type: TransactionType
   stamp_delta: number
   created_at: string
