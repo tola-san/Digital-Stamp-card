@@ -23,7 +23,7 @@ func (r *TransactionRepository) ListByCustomerID(
 	cursor *domain.TransactionCursor,
 ) ([]domain.StampTransaction, error) {
 	query := `
-		SELECT id, customer_id, staff_id, reward_id, stamp_qr_id, type, stamp_delta, created_at
+		SELECT id, customer_id, staff_id, reward_id, customer_qr_token_id, type, stamp_delta, created_at
 		FROM stamp_transactions
 		WHERE customer_id = ?`
 	args := []any{customerID}
@@ -43,13 +43,13 @@ func (r *TransactionRepository) ListByCustomerID(
 	transactions := make([]domain.StampTransaction, 0, limit)
 	for rows.Next() {
 		var transaction domain.StampTransaction
-		var staffID, rewardID, stampQRID sql.NullString
+		var staffID, rewardID, customerQRTokenID sql.NullString
 		if err := rows.Scan(
 			&transaction.ID,
 			&transaction.CustomerID,
 			&staffID,
 			&rewardID,
-			&stampQRID,
+			&customerQRTokenID,
 			&transaction.Type,
 			&transaction.StampDelta,
 			&transaction.CreatedAt,
@@ -58,7 +58,7 @@ func (r *TransactionRepository) ListByCustomerID(
 		}
 		transaction.StaffID = nullableStringPointer(staffID)
 		transaction.RewardID = nullableStringPointer(rewardID)
-		transaction.StampQRID = nullableStringPointer(stampQRID)
+		transaction.CustomerQRTokenID = nullableStringPointer(customerQRTokenID)
 		transactions = append(transactions, transaction)
 	}
 	if err := rows.Err(); err != nil {

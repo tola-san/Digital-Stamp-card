@@ -18,6 +18,7 @@ var Up = []string{
 	"000002_seed_default_reward.up.sql",
 	"000003_sessions_and_relationships.up.sql",
 	"000004_optimize_customer_queries.up.sql",
+	"000005_reverse_qr_flow.up.sql",
 }
 
 func ReadUp(name string) ([]byte, error) {

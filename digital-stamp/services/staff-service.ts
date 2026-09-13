@@ -2,6 +2,8 @@ import { api } from "@/lib/api";
 import type {
   LoginStaff,
   StaffApiResponse,
+  StampConfirmation,
+  StampScanPreview,
   StaffLoginResult,
 } from "@/types/staff";
 
@@ -25,4 +27,19 @@ export async function getCurrentStaff(): Promise<StaffLoginResult> {
 /* Revoke the current staff session and clear its cookie. */
 export async function logoutStaff(): Promise<void> {
   await api.delete("/staff-sessions/current");
+}
+
+export async function previewStampToken(token: string): Promise<StampScanPreview> {
+  const response = await api.post<StaffApiResponse<StampScanPreview>>(
+    "/staff/stamp-scans/preview",
+    { token },
+  );
+  return response.data.data;
+}
+
+export async function confirmStamp(scanId: string): Promise<StampConfirmation> {
+  const response = await api.post<StaffApiResponse<StampConfirmation>>(
+    `/staff/stamp-scans/${encodeURIComponent(scanId)}/confirm`,
+  );
+  return response.data.data;
 }

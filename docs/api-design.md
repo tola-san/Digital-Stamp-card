@@ -157,17 +157,17 @@ Staff session login, logout, and profile are implemented. Customer management an
 
 `stamp_delta` must be `1` to add a stamp or `-1` to reverse one. The API must reject a reversal that would make the card balance negative.
 
-### Temporary stamp QR codes
+### Temporary customer QR codes
 
 | Method | Path | Session | Purpose |
 | --- | --- | --- | --- |
-| `POST` | `/staff/stamp-qrs` | Staff | Generate a one-time, short-lived stamp QR code. |
-| `GET` | `/staff/stamp-qrs/current` | Staff | Get the staff member's active QR code. |
-| `DELETE` | `/staff/stamp-qrs/:stampQrId` | Staff | Cancel an active code. |
-| `GET` | `/staff/stamp-qrs` | Staff | View QR history. |
-| `POST` | `/stamps/claims` | Customer | Claim one stamp from a QR token. |
+| `POST` | `/customers/me/qr-tokens` | Customer | Generate a one-time, short-lived customer QR. |
+| `GET` | `/customers/me/qr-tokens/current` | Customer | Get the customer's active QR. |
+| `DELETE` | `/customers/me/qr-tokens/:tokenId` | Customer | Cancel an active QR. |
+| `POST` | `/staff/stamp-scans/preview` | Staff | Validate a QR and preview the customer card. |
+| `POST` | `/staff/stamp-scans/:scanId/confirm` | Staff | Confirm the purchase and add one stamp. |
 
-#### `POST /staff/stamp-qrs`
+#### `POST /customers/me/qr-tokens`
 
 **Response — `201 Created`**
 
@@ -182,9 +182,9 @@ Staff session login, logout, and profile are implemented. Customer management an
 }
 ```
 
-The database stores only a hash of `token`. A token is valid once, expires after 60 seconds, and becomes unavailable immediately after a successful claim.
+The database stores only a hash of `token`. A token is valid once, expires after 60 seconds, and becomes unavailable immediately after staff confirmation.
 
-#### `POST /stamps/claims`
+#### `POST /staff/stamp-scans/preview`
 
 ```json
 {
@@ -192,7 +192,11 @@ The database stores only a hash of `token`. A token is valid once, expires after
 }
 ```
 
-The claim runs in one database transaction: validate the customer session and QR, increment the card, create a `STAMP_ADDED` transaction, and mark the QR as used. This prevents duplicate claims.
+Preview validates the staff session and customer QR but does not add a stamp. It returns a short-lived `scan_id` plus the customer's name and current card progress.
+
+#### `POST /staff/stamp-scans/:scanId/confirm`
+
+Confirmation runs in one database transaction: lock and validate the customer QR, increment the card, create a `STAMP_ADDED` transaction, and mark the QR as used by the authenticated staff member. This prevents duplicate stamps.
 
 ### Rewards
 
@@ -247,7 +251,7 @@ The API verifies eligibility, updates stamp balance according to the reward rule
   "id": "uuid",
   "customer_id": "uuid",
   "staff_id": "uuid",
-  "stamp_qr_id": "uuid",
+  "customer_qr_token_id": "uuid",
   "type": "STAMP_ADDED",
   "stamp_delta": 1,
   "created_at": "2026-09-06T09:00:00Z"

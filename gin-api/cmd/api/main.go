@@ -58,9 +58,11 @@ func main() {
 	staffRepository := repository.NewStaffRepository(db.DB)
 	staffSessionRepository := repository.NewStaffSessionRepository(db.DB)
 	transactionRepository := repository.NewTransactionRepository(db.DB)
+	qrStampRepository := repository.NewQRStampRepository(db.DB)
 	customerService := service.NewCustomerService(customerRepository, transactionRepository)
 	customerSessionService := service.NewCustomerSessionService(customerRepository, customerSessionRepository)
 	staffService := service.NewStaffSessionService(staffRepository, staffSessionRepository)
+	qrStampService := service.NewQRStampService(qrStampRepository)
 
 	router := httpdelivery.NewRouter(httpdelivery.RouterDependencies{
 		HealthChecker:          db,
@@ -68,6 +70,7 @@ func main() {
 		CustomerService:        customerService,
 		CustomerSessionService: customerSessionService,
 		StaffService:           staffService,
+		QRStampService:         qrStampService,
 		CookieSecure:           cfg.CookieSecure,
 	})
 	server := &http.Server{Addr: ":" + cfg.Port, Handler: router, ReadHeaderTimeout: 5 * time.Second}
