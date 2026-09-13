@@ -139,6 +139,47 @@ func prepareReverseQRFlow(ctx context.Context, conn *sql.Conn) (bool, error) {
 		}
 	}
 
+	var serverVersion string
+	if err := conn.QueryRowContext(ctx, "SELECT VERSION()").Scan(&serverVersion); err != nil {
+		return false, fmt.Errorf("read database version: %w", err)
+	}
+	checkRows, err := conn.QueryContext(ctx, `
+		SELECT table_name, constraint_name
+		FROM information_schema.table_constraints
+		WHERE constraint_schema = DATABASE()
+		  AND constraint_type = 'CHECK'
+		  AND table_name IN ('stamp_qrs', 'customer_qr_tokens')
+		  AND constraint_name IN (
+			'stamp_qrs_usage_matches_status_check',
+			'customer_qr_tokens_usage_matches_status_check'
+		  )
+	`)
+	if err != nil {
+		return false, fmt.Errorf("inspect QR check constraints: %w", err)
+	}
+	var checks []foreignKey
+	for checkRows.Next() {
+		var check foreignKey
+		if err := checkRows.Scan(&check.table, &check.name); err != nil {
+			checkRows.Close()
+			return false, fmt.Errorf("scan QR check constraint: %w", err)
+		}
+		checks = append(checks, check)
+	}
+	if err := checkRows.Close(); err != nil {
+		return false, fmt.Errorf("close QR check constraint query: %w", err)
+	}
+	for _, check := range checks {
+		dropKeyword := "DROP CHECK"
+		if strings.Contains(strings.ToLower(serverVersion), "mariadb") {
+			dropKeyword = "DROP CONSTRAINT"
+		}
+		query := fmt.Sprintf("ALTER TABLE `%s` %s `%s`", strings.ReplaceAll(check.table, "`", "``"), dropKeyword, strings.ReplaceAll(check.name, "`", "``"))
+		if _, err := conn.ExecContext(ctx, query); err != nil {
+			return false, fmt.Errorf("drop check constraint %s.%s: %w", check.table, check.name, err)
+		}
+	}
+
 	var oldTable, newTable int
 	if err := conn.QueryRowContext(ctx, `
 		SELECT
