@@ -1,4 +1,9 @@
-import type { Customer, StampCard, StampTransaction } from "@/types/domain";
+import type {
+  Customer,
+  QRStatus,
+  StampCard,
+  StampTransaction,
+} from "@/types/domain";
 
 /* Request body for POST /customers. */
 export type RegisterCustomer = {
@@ -26,6 +31,13 @@ export type CurrentCustomerResult = {
 
 export type CustomerCardResult = {
   card: StampCard;
+};
+
+export type GeneratedCustomerQR = {
+  id: string;
+  token: string;
+  status: QRStatus;
+  expires_at: string;
 };
 
 export type TransactionPage = {

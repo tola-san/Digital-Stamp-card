@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { CustomerQRPanel } from "@/components/customer/customer-qr-panel";
 import { ApiError } from "@/lib/api";
 import {
   getCurrentCustomer,
@@ -317,6 +318,8 @@ export function CustomerCardView() {
               </div>
             </div>
           </div>
+
+          <CustomerQRPanel customerName={customer.name} />
 
           {error && (
             <div
