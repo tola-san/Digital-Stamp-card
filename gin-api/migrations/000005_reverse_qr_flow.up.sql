@@ -10,7 +10,12 @@ ALTER TABLE customer_qr_tokens
     ADD CONSTRAINT customer_qr_tokens_customer_fk
         FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
     ADD CONSTRAINT customer_qr_tokens_used_by_staff_fk
-        FOREIGN KEY (used_by_staff_id) REFERENCES staff(id);
+        FOREIGN KEY (used_by_staff_id) REFERENCES staff(id),
+    ADD CONSTRAINT customer_qr_tokens_usage_matches_status_check CHECK (
+        (status = 'USED' AND used_at IS NOT NULL AND used_by_staff_id IS NOT NULL)
+        OR
+        (status <> 'USED' AND used_at IS NULL AND used_by_staff_id IS NULL)
+    );
 
 ALTER TABLE stamp_transactions
     CHANGE COLUMN stamp_qr_id customer_qr_token_id CHAR(36) CHARACTER SET ascii,
