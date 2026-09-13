@@ -3,6 +3,7 @@ import type {
   ApiResponse,
   CurrentCustomerResult,
   CustomerCardResult,
+  GeneratedCustomerQR,
   LoginCustomer,
   LoginCustomerResult,
   RegisterCustomer,
@@ -50,6 +51,22 @@ export async function getCustomerCard(): Promise<CustomerCardResult> {
   );
 
   return response.data.data;
+}
+
+/* Create a short-lived QR token that the customer can present to staff. */
+export async function generateCustomerQR(): Promise<GeneratedCustomerQR> {
+  const response = await api.post<ApiResponse<GeneratedCustomerQR>>(
+    "/customers/me/qr-tokens",
+  );
+
+  return response.data.data;
+}
+
+/* Cancel a QR token before it expires. */
+export async function cancelCustomerQR(tokenID: string): Promise<void> {
+  await api.delete(
+    `/customers/me/qr-tokens/${encodeURIComponent(tokenID)}`,
+  );
 }
 
 /* Load one cursor-based page of the customer's transaction history. */
